@@ -36,3 +36,68 @@ const attendees: Attendee[] = [
         email: "alex.chen@email.com"
     }
 ];
+
+interface EventPopularity extends Event {
+    spotsRemaining: number;
+    popularityScore: number;
+    popularityTier: string;
+}
+
+export function getAllEvents(): Event[] {
+    return events;
+}
+
+export function getEventById(id: number): Event | undefined {
+    return events.find((event: Event) => event.id === id);
+}
+
+export function calculatePopularityScore(event: Event): number {
+    if (event.capacity === 0) {
+        return 0;
+    }
+
+    const popularityScore =
+        (event.registrationCount / event.capacity) * 100;
+
+    return Math.round(popularityScore * 10) / 10;
+}
+
+export function getPopularityTier(popularityScore: number): string {
+    if (popularityScore >= 90) {
+        return "Hot";
+    }
+
+    if (popularityScore >= 70) {
+        return "Popular";
+    }
+
+    if (popularityScore >= 50) {
+        return "Moderate";
+    }
+
+    if (popularityScore >= 25) {
+        return "Building";
+    }
+
+    return "New";
+}
+
+export function getEventPopularity(
+    id: number
+): EventPopularity | undefined {
+    const event = getEventById(id);
+
+    if (!event) {
+        return undefined;
+    }
+
+    const popularityScore = calculatePopularityScore(event);
+    const popularityTier = getPopularityTier(popularityScore);
+
+    return {
+        ...event,
+        spotsRemaining: event.capacity - event.registrationCount,
+        popularityScore,
+        popularityTier
+    };
+}
