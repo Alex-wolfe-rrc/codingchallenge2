@@ -101,3 +101,54 @@ export function getEventPopularity(
         popularityTier
     };
 }
+
+export function createEvent(
+    name: string,
+    date: string,
+    capacity: number
+): Event {
+    const newEvent: Event = {
+        id: events.length + 1,
+        name,
+        date,
+        capacity,
+        registrationCount: 0
+    };
+
+    events.push(newEvent)
+
+    return newEvent
+}
+
+export function updateEvent(
+    id: number,
+    name: string,
+    date: string,
+    capacity: number
+): Event | undefined {
+    const event = getEventById(id);
+
+    if (!event) {
+        return undefined;
+    }
+
+    event.name = name;
+    event.date = date;
+    event.capacity = capacity;
+
+    return event;
+}
+
+export function deleteEvent(id: number): Event | undefined {
+    const eventIndex = events.findIndex(
+        (event: Event) => event.id === id
+    );
+
+    if (eventIndex === -1) {
+        return undefined;
+    }
+
+    const deletedEvent = events.splice(eventIndex, 1);
+
+    return deletedEvent[0];
+}
